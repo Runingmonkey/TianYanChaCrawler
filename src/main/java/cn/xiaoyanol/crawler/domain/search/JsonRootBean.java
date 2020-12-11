@@ -3,13 +3,15 @@
   */
 package cn.xiaoyanol.crawler.domain.search;
 
+import java.io.Serializable;
+
 /**
  * Auto-generated: 2019-08-13 16:8:25
  *
  * @author bejson.com (i@bejson.com)
  * @website http://www.bejson.com/java2pojo/
  */
-public class JsonRootBean {
+public class JsonRootBean implements Serializable {
 
     private String state;
     private String message;

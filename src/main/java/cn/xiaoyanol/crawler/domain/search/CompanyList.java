@@ -3,7 +3,6 @@
   */
 package cn.xiaoyanol.crawler.domain.search;
 
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -59,7 +58,7 @@ public class CompanyList {
     private int companyType;
     private String companyOrgType;
     private List<String> labelList;
-    private MatchField matchField;
+    private cn.xiaoyanol.crawler.domain.search.MatchField matchField;
     private double latitude;
     private double longitude;
     private String legalPersonId;
@@ -392,10 +391,10 @@ public class CompanyList {
          return labelList;
      }
 
-    public void setMatchField(MatchField matchField) {
+    public void setMatchField(cn.xiaoyanol.crawler.domain.search.MatchField matchField) {
          this.matchField = matchField;
      }
-     public MatchField getMatchField() {
+     public cn.xiaoyanol.crawler.domain.search.MatchField getMatchField() {
          return matchField;
      }
 

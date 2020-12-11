@@ -9,7 +9,7 @@ import cn.xiaoyanol.crawler.service.ISearchService;
 import cn.xiaoyanol.crawler.utils.EmUtils;
 import cn.xiaoyanol.crawler.utils.EnumParser;
 import cn.xiaoyanol.crawler.utils.HttpClientUtils;
-import cn.xiaoyanol.crawler.utils.JsonUtils;
+import com.alibaba.fastjson.JSON;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.util.EntityUtils;
@@ -53,7 +53,9 @@ public class SearchServiceImpl implements ISearchService {
 
             String s = EntityUtils.toString(response.getEntity());
 
-            JsonRootBean jsonRootBean = JsonUtils.convertValue(s, JsonRootBean.class);
+           //JsonRootBean jsonRootBean = JsonUtils.convertValue(s, JsonRootBean.class);
+
+            JsonRootBean jsonRootBean = JSON.parseObject(s,JsonRootBean.class);
 
             Data data = jsonRootBean.getData();
 
@@ -72,6 +74,8 @@ public class SearchServiceImpl implements ISearchService {
                 search.setType(company.getType());
                 searches.add(search);
             }
+
+
             return searches;
 
         }catch (Exception e){
@@ -119,7 +123,7 @@ public class SearchServiceImpl implements ISearchService {
 
     public static void main(String[] args) throws InvocationTargetException, IllegalAccessException {
 //        JsonRootBean jsonRootBean = JsonUtils.convertValue(tmp, JsonRootBean.class);
-//        Data data = jsonRootBean.getData();
+//        Data data = jsonRootBean.getPatentData();
 //        List<CompanyList> companyList = data.getCompanyList();
 //        List<Search> searches = new ArrayList<>();
 //        for (CompanyList company : companyList) {

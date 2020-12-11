@@ -2,6 +2,8 @@
   * Copyright 2019 bejson.com 
   */
 package cn.xiaoyanol.crawler.domain.search;
+import cn.xiaoyanol.crawler.domain.search.Office;
+
 import java.util.List;
 
 /**

@@ -4,7 +4,7 @@ import lombok.Data;
 
 /**
  * Created with IntelliJ IDEA.
- * Description:
+ * Description: 公司基本信息
  *
  * @Author: chenyanfeng
  * @Date: 2019-08-13

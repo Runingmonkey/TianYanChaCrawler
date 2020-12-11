@@ -8,7 +8,6 @@ import cn.xiaoyanol.crawler.service.IBaseInfoService;
 import cn.xiaoyanol.crawler.utils.EnumParser;
 import cn.xiaoyanol.crawler.utils.HttpClientUtils;
 import cn.xiaoyanol.crawler.utils.JsonUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.util.EntityUtils;
 
@@ -52,7 +51,7 @@ public class BaseInfoServiceImpl implements IBaseInfoService {
 
             return baseInfo;
         }catch (Exception e){
-
+            e.printStackTrace();
         }
         return null;
     }

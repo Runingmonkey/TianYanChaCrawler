@@ -14,7 +14,7 @@ public class Office {
     private String area;
     private int total;
     private String companyName;
-    private long cid;
+    private String cid;
     private int score;
     private String state;
     public void setArea(String area) {
@@ -38,12 +38,13 @@ public class Office {
          return companyName;
      }
 
-    public void setCid(long cid) {
-         this.cid = cid;
-     }
-     public long getCid() {
-         return cid;
-     }
+    public String getCid() {
+        return cid;
+    }
+
+    public void setCid(String cid) {
+        this.cid = cid;
+    }
 
     public void setScore(int score) {
          this.score = score;

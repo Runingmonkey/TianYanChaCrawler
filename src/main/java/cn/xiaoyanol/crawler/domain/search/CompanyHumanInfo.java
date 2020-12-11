@@ -16,7 +16,7 @@ public class CompanyHumanInfo {
     private String companyName;
     private int distinctNum;
     private int resultCount;
-    private List<ResultList> resultList;
+    private List<cn.xiaoyanol.crawler.domain.search.ResultList> resultList;
     private int totalPage;
     public void setGraphId(long graphId) {
          this.graphId = graphId;
@@ -46,10 +46,10 @@ public class CompanyHumanInfo {
          return resultCount;
      }
 
-    public void setResultList(List<ResultList> resultList) {
+    public void setResultList(List<cn.xiaoyanol.crawler.domain.search.ResultList> resultList) {
          this.resultList = resultList;
      }
-     public List<ResultList> getResultList() {
+     public List<cn.xiaoyanol.crawler.domain.search.ResultList> getResultList() {
          return resultList;
      }
 

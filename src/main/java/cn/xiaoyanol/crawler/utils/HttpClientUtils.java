@@ -143,7 +143,7 @@ public class HttpClientUtils {
     }
 
     /**
-     * 设置http请求头
+     * 设置http 请求头
      * @param request
      * @param headers
      */
@@ -260,12 +260,13 @@ public class HttpClientUtils {
      * @param jsonString
      * @return
      */
-    public static String doPost(String url, String jsonString) {
+    public static String doPost(String url, Map<String, String> headers,String jsonString) {
         if (StringUtils.isBlank(url)) {
             return null;
         }
         try {
             HttpPost httpPost = new HttpPost(url);
+            setHeaders(httpPost, headers);
             StringEntity stringEntity = new StringEntity(jsonString, "utf-8");
             stringEntity.setContentType("application/json");
             httpPost.setEntity(stringEntity);
