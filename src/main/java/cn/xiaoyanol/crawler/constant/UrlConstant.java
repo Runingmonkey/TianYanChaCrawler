@@ -1,5 +1,7 @@
 package cn.xiaoyanol.crawler.constant;
 
+import cn.xiaoyanol.crawler.dao.domain.Trademark;
+
 /**
  * Created with IntelliJ IDEA.
  * Description:
@@ -30,7 +32,7 @@ public class UrlConstant {
     public static final String PATENT_INFO_URL = "https://api9.tianyancha.com/services/v3/expanse/patent/";
 
     /**
-     * 著作权
+     *  著作权
      *  GET
      *  /cloud-intellectual-property/intellectualProperty/softwareCopyrightList?id=1208288762&pageSize=10&pageNum=1 HTTP/1.1
      */
@@ -44,9 +46,16 @@ public class UrlConstant {
     public static final String TRADEMARK_LIST_URL = "https://api9.tianyancha.com/services/v3/trademark/tms.json";
 
     /**
-     * 网站备案信息
+     *  网站备案信息
      *  GET  /services/v3/ar/icp/24416401.json
      */
     public static final String WEBSITE_LIST = "https://api9.tianyancha.com/services/v3/ar/icp/";
+
+
+    /**
+     *  商标详情
+     *  GET https://api9.tianyancha.com/services/v3/trademark/detailV2?regNo=37878877&tmClass=11-
+     */
+    public static final String TRADEMARK_DETAIL = "https://api9.tianyancha.com/services/v3/trademark/detailV2/";
 
 }

@@ -1,5 +1,6 @@
 package cn.xiaoyanol.crawler.service;
 
+import cn.xiaoyanol.crawler.dao.domain.Trademark;
 import cn.xiaoyanol.crawler.domain.trademark.Items;
 
 import java.util.List;
@@ -19,5 +20,15 @@ public interface ITradeMarkService {
      * @return
      */
     List<Items> getTradeMarkList(Long companyId);
+
+
+    /**
+     * @description 获取重点企业的商标数据
+     * @author mike ling
+     * @date 2020/12/14 16:12
+     * @param:
+     * @return java.util.List<cn.xiaoyanol.crawler.dao.domain.Trademark>
+     */
+//    List<Trademark> getKeyEnterprisesTradeMarkList();
 
 }

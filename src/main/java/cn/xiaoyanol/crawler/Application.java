@@ -1,17 +1,12 @@
 package cn.xiaoyanol.crawler;
 
-import cn.xiaoyanol.crawler.dao.domain.Company;
-import cn.xiaoyanol.crawler.dao.domain.Patent;
-import cn.xiaoyanol.crawler.dao.domain.Trademark;
-import cn.xiaoyanol.crawler.dao.domain.Website;
+import cn.xiaoyanol.crawler.constant.UrlConstant;
+import cn.xiaoyanol.crawler.dao.domain.*;
 import cn.xiaoyanol.crawler.domain.baseinfo.BaseInfo;
 import cn.xiaoyanol.crawler.domain.patentinfo.Items;
 import cn.xiaoyanol.crawler.domain.search.Search;
 import cn.xiaoyanol.crawler.domain.website.Data;
-import cn.xiaoyanol.crawler.mapper.CompanyMapper;
-import cn.xiaoyanol.crawler.mapper.PatentMapper;
-import cn.xiaoyanol.crawler.mapper.TrademarkMapper;
-import cn.xiaoyanol.crawler.mapper.WebsiteMapper;
+import cn.xiaoyanol.crawler.mapper.*;
 import cn.xiaoyanol.crawler.service.IBaseInfoService;
 import cn.xiaoyanol.crawler.service.ISearchService;
 import cn.xiaoyanol.crawler.service.impl.*;
@@ -25,12 +20,16 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import tk.mybatis.mapper.entity.Example;
 import tk.mybatis.spring.annotation.MapperScan;
 
+import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 
@@ -58,6 +57,9 @@ public class Application implements CommandLineRunner {
 
     @Autowired
     private WebsiteMapper websiteMapper;
+
+    @Autowired
+    private TradeMarkDetailMapper tradeMarkDetailMapper;
 
     private boolean exportFlag = true;
 
@@ -90,33 +92,19 @@ public class Application implements CommandLineRunner {
 
 
         // 查询线程
-        executorService.execute(() ->{
-            search();
-        });
-
-        // 导出线程
-//        executorService.execute(()->{
-//            export(true, seconds);
+//        executorService.execute(() ->{
+//            search();
 //        });
 
+
+        // 插入商标详情
+        executorService.execute(()->{
+            tradeMarkDetail();
+        });
+
+
+
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -136,7 +124,7 @@ public class Application implements CommandLineRunner {
         // 先搜索
 
         for (String companyName : companyList) {
-            Map<String, String> headers = HeaderUtils.getHeaders(authorization);
+            Map<String, String> headers = HeaderUtils.getHeaders();
             ISearchService searchService = new SearchServiceImpl(headers);
             try {
                 log.info("正在查询：{}", companyName);
@@ -182,6 +170,7 @@ public class Application implements CommandLineRunner {
                     String s = JsonUtils.toJSONString(baseInfo);
                     System.out.println(s);
                     companyMapper.insert(company);
+                    log.info("查询结果公司名: " + baseInfo.getName());
                     cid = company.getId();
                     if ("注销".equals(company.getRegStatus()) || "吊销，未注销".equals(company.getRegStatus()) || "吊销".equals(company.getRegStatus())) {
                         continue;
@@ -274,37 +263,40 @@ public class Application implements CommandLineRunner {
 
     }
 
-    /**
-     * 导出
-     */
-//    private synchronized void export(boolean sleep, int seconds) {
-//        while (exportFlag) {
-//
-//            // 导出频率不能小于1秒每次
-//            if (seconds < 1) {
-//                seconds = 1;
-//            }
-//
-//            // 导出数据
-////            List<BaseInfo> baseInfos = baseInfoMapper.selectAll();
-//            EasyExcelUtils.write("查询结果", baseInfos);
-//
-//            // 判断是否睡眠
-//            if (sleep) {
-//                try {
-//                    Thread.sleep(seconds * 1000);
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                    throw new RuntimeException();
-//                }
-//            }
-//        }
-//        //
-//        if (!sleep) {
-//            List<BaseInfo> baseInfos = baseInfoMapper.selectAll();
-//            EasyExcelUtils.write("查询结果", baseInfos);
-//        }
-//
-//    }
 
+    /**
+     * @description 商标详情
+     * @author mike ling
+     * @date 2020/12/14 15:36
+     * @return void
+     */
+    private synchronized void tradeMarkDetail() {
+        // 获取重点企业名单
+        Example companyExample = new Example(Company.class);
+        companyExample.createCriteria().andEqualTo("isImportant", 1);
+        List<Company> companies = companyMapper.selectByExample(companyExample);
+
+        // 需要获取详情的 商标列表
+        List<Trademark> trademarkArrayList = new ArrayList<>();
+        for (Company company : companies) {
+            Example tradeMarkExample = new Example(Trademark.class);
+            tradeMarkExample.createCriteria().andEqualTo("cid", company.getId());
+            List<Trademark> tList = trademarkMapper.selectByExample(tradeMarkExample);
+            trademarkArrayList.addAll(tList);
+        }
+
+        for (Trademark trademark : trademarkArrayList) {
+            Map<String, String> head = HeaderUtils.getHeaders();
+            TradeMarkDetailServiceImpl tradeMarkDetailService = new TradeMarkDetailServiceImpl(head);
+            TrademarkDetail tradeMarkDetail = tradeMarkDetailService.getTradeMarkDetail(trademark);
+            System.out.println();
+            System.out.println(tradeMarkDetail);
+            tradeMarkDetailMapper.insert(tradeMarkDetail);
+            try {
+                TimeUnit.SECONDS.sleep(1);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }

@@ -2,7 +2,7 @@ spring:
   application:
     name: test
   datasource:
-    url: jdbc:mysql://d.db.daheng.co:3306/dh_zs_ipr?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://t.db.daheng.co:3306/dh_zs_ipr?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
     username: root
     password: SZ2019@dh-data.com
     type: com.zaxxer.hikari.HikariDataSource

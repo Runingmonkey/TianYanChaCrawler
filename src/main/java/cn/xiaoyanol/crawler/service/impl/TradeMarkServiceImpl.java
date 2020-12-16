@@ -1,12 +1,20 @@
 package cn.xiaoyanol.crawler.service.impl;
 
 import cn.xiaoyanol.crawler.constant.UrlConstant;
+import cn.xiaoyanol.crawler.dao.domain.Company;
+import cn.xiaoyanol.crawler.dao.domain.Trademark;
 import cn.xiaoyanol.crawler.domain.trademark.Items;
 import cn.xiaoyanol.crawler.domain.trademark.JsonsRootBean;
+import cn.xiaoyanol.crawler.mapper.CompanyMapper;
+import cn.xiaoyanol.crawler.mapper.TrademarkMapper;
 import cn.xiaoyanol.crawler.service.ITradeMarkService;
 import cn.xiaoyanol.crawler.utils.HttpClientUtils;
 import cn.xiaoyanol.crawler.utils.JsonUtils;
 import com.alibaba.fastjson.JSONObject;
+import org.apache.http.client.HttpClient;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import tk.mybatis.mapper.entity.Example;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +27,12 @@ import java.util.Optional;
  * @date: 2020/12/2 17:50
  */
 public class TradeMarkServiceImpl implements ITradeMarkService {
+
+    @Autowired
+    private TrademarkMapper trademarkMapper;
+
+    @Autowired
+    private CompanyMapper companyMapper;
 
     private static String url = UrlConstant.TRADEMARK_LIST_URL;
     private Map<String, String> headers;
@@ -76,4 +90,26 @@ public class TradeMarkServiceImpl implements ITradeMarkService {
         jsonObject.put("app_year", -100);
         return jsonObject.toString();
     }
+
+
+
+//    @Override
+//    public List<Trademark> getKeyEnterprisesTradeMarkList() {
+//        // 获取重点企业名单
+//        Example companyExample = new Example(Company.class);
+//        companyExample.createCriteria().andEqualTo("isImportant", 1);
+//        List<Company> companies = companyMapper.selectByExample(companyExample);
+//
+//        // 需要获取详情的 商标列表
+//        List<Trademark> trademarkArrayList = new ArrayList<>();
+//        for (Company company : companies) {
+//            Example tradeMarkExample = new Example(Trademark.class);
+//            tradeMarkExample.createCriteria().andEqualTo("cid", company.getId());
+//            List<Trademark> tList = trademarkMapper.selectByExample(tradeMarkExample);
+//            trademarkArrayList.addAll(tList);
+//        }
+//
+//        return trademarkArrayList;
+//    }
+
 }

@@ -14,7 +14,7 @@ import java.util.Random;
  */
 public class HeaderUtils {
 
-    public static Map<String, String> getHeaders(String authorization) {
+    public static Map<String, String> getHeaders() {
 
         // 设置请求参数 0###oo34J0ZRgatN5UBO8UQRwap6Ew_A###1565664617903###24ed6f7b1512aee63869b97552a2bd8f
         Map<String, String> headers = new HashMap<>();
