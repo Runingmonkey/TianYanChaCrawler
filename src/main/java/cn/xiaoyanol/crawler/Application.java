@@ -13,6 +13,7 @@ import cn.xiaoyanol.crawler.service.impl.*;
 import cn.xiaoyanol.crawler.utils.FileReaderUtils;
 import cn.xiaoyanol.crawler.utils.HeaderUtils;
 import cn.xiaoyanol.crawler.utils.JsonUtils;
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,10 +24,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import tk.mybatis.mapper.entity.Example;
 import tk.mybatis.spring.annotation.MapperScan;
 
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.io.IOException;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -61,6 +63,9 @@ public class Application implements CommandLineRunner {
     @Autowired
     private TradeMarkDetailMapper tradeMarkDetailMapper;
 
+    @Autowired
+    private Patent2Mapper patent2Mapper;
+
     private boolean exportFlag = true;
 
     private String authorization;
@@ -90,20 +95,30 @@ public class Application implements CommandLineRunner {
         // 查询频率 单位：毫秒
         sleepTime = 300;
 
-
-        // 查询线程
-//        executorService.execute(() ->{
-//            search();
-//        });
-
-
-        // 插入商标详情
-        executorService.execute(()->{
-            tradeMarkDetail();
-        });
-
-
-
+        System.out.println("请输入你要执行的程序: 1, 查询公司数据; 2, 商标详情; 3, 专利信息");
+        Scanner scanner = new Scanner(System.in);
+        String in = scanner.nextLine();
+        int i = Integer.parseInt(in);
+        if (i == 1) {
+            // 查询线程
+            executorService.execute(() ->{
+                search();
+            });
+        } else if (i == 2) {
+            // 插入商标详情
+            executorService.execute(()->{
+                tradeMarkDetail();
+            });
+        } else if (i == 3) {
+            // 插入专利信息
+            executorService.execute(()->{
+                try {
+                    getPatent();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+        }
     }
 
 
@@ -165,7 +180,7 @@ public class Application implements CommandLineRunner {
                     company.setBusinessScope(baseInfo.getBusinessScope());
                     company.setAlias(baseInfo.getAlias());
                     company.setCompanyOrgType(baseInfo.getCompanyOrgType());
-                    company.setIsImportant(1);
+//                    company.setIsImportant(0);
 
                     String s = JsonUtils.toJSONString(baseInfo);
                     System.out.println(s);
@@ -177,36 +192,12 @@ public class Application implements CommandLineRunner {
                     }
                 }
 
-
-                // 公司专利信息
+                // 公司专利信息 (所有)
                 PatentServiceImpl patentService = new PatentServiceImpl(headers);
                 List<Items> patentList = patentService.getPatentList(search.getId());
-                if (!patentList.isEmpty()) {
-                    Long finalCid = cid;
-                    List<Patent> inserts = patentList.stream().map(r ->{
-                        Patent patent = new Patent();
-                        patent.setCid(finalCid);
-                        patent.setPatent_name(r.getPatentName());
-                        patent.setApp_Number(r.getAppnumber());
-                        patent.setTitle(r.getTitle());
-                        patent.setApplicant_name(r.getApplicantname());
-                        patent.setPatentType(r.getPatentType());
-                        patent.setApplication_time(r.getApplicationTime());
-                        patent.setPub_date(r.getPubDate());
-                        patent.setAgency(r.getAgency());
-                        patent.setInventor(r.getInventor());
-                        patent.setAgent(r.getAgent());
-                        patent.setPatent_num(r.getPatentNum());
-                        patent.setImgurl(r.getImgUrl());
-                        patent.setAll_cat_num(r.getAllCatNum());
-                        patent.setAbstracts(r.getAbstracts());
-                        patent.setAddress(r.getAddress());
-                        return patent;
-                    }).collect(Collectors.toList());
-                    patentMapper.insertList(inserts);
-                }
+                insertPatent2(cid, patentList);
 
-                // 公司商标信息
+                // 公司商标信息 (所有)
                 TradeMarkServiceImpl tradeMarkService = new TradeMarkServiceImpl(headers);
                 List<cn.xiaoyanol.crawler.domain.trademark.Items> list = tradeMarkService.getTradeMarkList(search.getId());
 
@@ -271,26 +262,37 @@ public class Application implements CommandLineRunner {
      * @return void
      */
     private synchronized void tradeMarkDetail() {
-        // 获取重点企业名单
-        Example companyExample = new Example(Company.class);
-        companyExample.createCriteria().andEqualTo("isImportant", 1);
-        List<Company> companies = companyMapper.selectByExample(companyExample);
+        // 获取企业名单
+//        Example companyExample = new Example(Company.class);
+//        companyExample.createCriteria().andEqualTo("isImportant", 0);
+//        List<Company> companies = companyMapper.selectByExample(companyExample);
 
         // 需要获取详情的 商标列表
-        List<Trademark> trademarkArrayList = new ArrayList<>();
-        for (Company company : companies) {
-            Example tradeMarkExample = new Example(Trademark.class);
-            tradeMarkExample.createCriteria().andEqualTo("cid", company.getId());
-            List<Trademark> tList = trademarkMapper.selectByExample(tradeMarkExample);
-            trademarkArrayList.addAll(tList);
-        }
+//        List<Trademark> trademarkArrayList = new ArrayList<>();
+//        for (Company company : companies) {
+//            Example tradeMarkExample = new Example(Trademark.class);
+//            tradeMarkExample.createCriteria().andEqualTo("cid", company.getId());
+//            List<Trademark> tList = trademarkMapper.selectByExample(tradeMarkExample);
+//            trademarkArrayList.addAll(tList);
+//        }
 
-        for (Trademark trademark : trademarkArrayList) {
+        // 是否已经存在
+//        Example example = new Example(TrademarkDetail.class);
+//        example.createCriteria().andEqualTo("regNo");
+//        tradeMarkDetailMapper.selectByExample(example);
+
+
+        // 获取所有商标
+        Example example = new Example(Trademark.class);
+        example.createCriteria().andGreaterThan("id", 116412);
+        List<Trademark> trademarkList = trademarkMapper.selectByExample(example);
+
+        for (Trademark trademark : trademarkList) {
             Map<String, String> head = HeaderUtils.getHeaders();
             TradeMarkDetailServiceImpl tradeMarkDetailService = new TradeMarkDetailServiceImpl(head);
             TrademarkDetail tradeMarkDetail = tradeMarkDetailService.getTradeMarkDetail(trademark);
-            System.out.println();
-            System.out.println(tradeMarkDetail);
+            log.info("查询: {} 的商标信息", "id " + trademark.getCid() + " 名 " + trademark.getApplicantCn());
+            log.info("结果: " + tradeMarkDetail);
             tradeMarkDetailMapper.insert(tradeMarkDetail);
             try {
                 TimeUnit.SECONDS.sleep(1);
@@ -299,4 +301,93 @@ public class Application implements CommandLineRunner {
             }
         }
     }
+
+    /**
+     * @description 获取专利信息
+     * @author mike ling
+     * @date 2020/12/18 12:24
+     * @param:
+     * @return void
+     */
+    private synchronized void getPatent() throws IOException {
+        Example example = new Example(Company.class);
+//        Example.Criteria criteria = example.createCriteria().orEqualTo("regStatus", "在业").orEqualTo("regStatus", "存续").orEqualTo("regStatus", "正常");
+        // 断点续查
+        example.createCriteria().andGreaterThan("id", 242892);
+
+        List<Company> companies = companyMapper.selectByExample(example);
+
+        for (Company company : companies) {
+            Map<String, String> headers = HeaderUtils.getHeaders();
+            PatentServiceImpl patentService = new PatentServiceImpl(headers);
+            Long tycId = Long.valueOf(company.getTycId());
+            List<Items> patentList = patentService.getPatentList(tycId);
+            log.info("查询: {} 的专利信息",company.getId() + ":" + company.getName());
+            insertPatent2(company.getId(), patentList);
+            System.out.println();
+            try {
+                TimeUnit.SECONDS.sleep(1);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void insertPatent2(Long companyId, List<Items> patentList) {
+        if (!patentList.isEmpty()) {
+            List<Patent2> inserts = patentList.stream().map(r ->{
+                Patent2 patent2 = new Patent2();
+                patent2.setCid(companyId);
+                patent2.setPatentName(r.getPatentName());
+                patent2.setAppNumber(r.getAppnumber());
+                patent2.setTitle(r.getTitle());
+                patent2.setApplicantName(r.getApplicantName());
+                patent2.setPatenttype(r.getPatentType());
+                patent2.setAllCatNum(r.getAllCatNum());
+                patent2.setPatentNum(r.getPatentNum());
+                if (r.getApplicationTime() != null) {
+                    Date applicationTime = r.getApplicationTime();
+                    Long time = applicationTime.getTime();
+                    patent2.setApplicationTime(parseDate(time.toString()));
+                }
+                if (r.getPubDate() != null) {
+                    Long time = r.getPubDate().getTime();
+                    patent2.setPubDate(parseDate(time.toString()));
+
+                }
+                patent2.setPubNum(r.getPubnumber());
+                patent2.setInventor(r.getInventor());
+                patent2.setAgent(r.getAgent());
+                patent2.setAgency(r.getAgency());
+                patent2.setLawStatus(r.getLprs());
+                if (r.getLawStatus() != null) {
+                    patent2.setLawStatusFlow(JSON.toJSONString(r.getLawStatus()));
+                }
+                patent2.setAddress(r.getAddress());
+                patent2.setImgurl(r.getImgUrl());
+                patent2.setAbstracts(r.getAbstracts());
+                return patent2;
+            }).collect(Collectors.toList());
+            patent2Mapper.insertList(inserts);
+        }
+    }
+
+
+    /**
+     * @description 时间戳转换Date
+     * @author mike ling
+     * @date 2020/12/15 14:31
+     * @param:
+     * @return void
+     */
+    public LocalDate parseDate(String timeStr) {
+        long milliseconds = Long.parseLong(timeStr);
+        /// 毫秒级时间戳 -> LocalDateTime
+//                LocalDateTime localDateTime = LocalDateTime.ofEpochSecond(milliseconds / 1000, 0, ZoneOffset.ofHours(8));
+        // 毫秒级时间戳 -> LocalDate
+        LocalDate localDate = Instant.ofEpochMilli(milliseconds).atZone(ZoneOffset.ofHours(8)).toLocalDate();
+
+        return localDate;
+    }
+
 }

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dh.webapi.ipr.dao.Patent2Mapper">
+  <resultMap id="BaseResultMap" type="cn.xiaoyanol.crawler.dao.domain.Patent2">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="cid" jdbcType="BIGINT" property="cid" />
+    <result column="patent_name" jdbcType="VARCHAR" property="patentName" />
+    <result column="app_number" jdbcType="VARCHAR" property="appNumber" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="applicant_name" jdbcType="VARCHAR" property="applicantName" />
+    <result column="patentType" jdbcType="VARCHAR" property="patenttype" />
+    <result column="all_cat_num" jdbcType="VARCHAR" property="allCatNum" />
+    <result column="patent_num" jdbcType="VARCHAR" property="patentNum" />
+    <result column="application_time" jdbcType="DATE" property="applicationTime" />
+    <result column="pub_date" jdbcType="DATE" property="pubDate" />
+    <result column="pub_num" jdbcType="VARCHAR" property="pubNum" />
+    <result column="inventor" jdbcType="VARCHAR" property="inventor" />
+    <result column="agent" jdbcType="VARCHAR" property="agent" />
+    <result column="agency" jdbcType="VARCHAR" property="agency" />
+    <result column="law_status" jdbcType="VARCHAR" property="lawStatus" />
+    <result column="address" jdbcType="VARCHAR" property="address" />
+    <result column="imgurl" jdbcType="VARCHAR" property="imgurl" />
+    <result column="abstracts" jdbcType="VARCHAR" property="abstracts" />
+  </resultMap>
+</mapper>

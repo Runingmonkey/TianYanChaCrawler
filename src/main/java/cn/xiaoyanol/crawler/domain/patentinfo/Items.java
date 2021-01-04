@@ -11,6 +11,7 @@ import java.util.List;
 public class Items {
 
     private String mainCatNum;
+    // 创建时间
     private String createTime;
     private String cat;
     // 公开(公告) 号
@@ -31,12 +32,13 @@ public class Items {
     private String patentType;
     // 公开(公告)日
     private Date pubDate;
-
+    // 公开(公告)号
     private String applicationPublishNum;
+    // 法律状态
     private String lprs;
     // 代理机构
     private String agency;
-    // TODO 法律状态
+    // TODO 法律状态 时间流程
     private List<cn.xiaoyanol.crawler.domain.patentinfo.Lawstatus> lawStatus;
     // 发明人
     private String inventor;
@@ -53,6 +55,7 @@ public class Items {
     private String abstracts;
     // 地址
     private String address;
+    //
     private String eventTime;
     // 雪花id
     private String uuid;

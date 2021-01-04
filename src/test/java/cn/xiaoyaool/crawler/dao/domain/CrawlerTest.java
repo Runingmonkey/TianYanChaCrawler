@@ -11,6 +11,9 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import tk.mybatis.mapper.entity.Example;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @description:
  * @author: mike ling
@@ -55,5 +58,18 @@ public class CrawlerTest extends Application {
     @Test
     public void test04() {
         tradeMarkService.getTradeMarkList(1143230669L);
+    }
+
+
+    @Test
+    public void test05() {
+        List<Integer> integers = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            integers.add(i);
+        }
+
+        List<Integer> list = integers.subList(1, integers.size());
+        System.out.println(integers);
+        System.out.println(list);
     }
 }

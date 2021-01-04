@@ -64,8 +64,11 @@ public class TradeMarkDetailServiceImpl implements ITradeMarkDetailService {
             String flowListString = JSON.toJSONString(flowList);
 
             TrademarkDetail trademarkDetail = new TrademarkDetail();
-            trademarkDetail.setTycId(Long.valueOf(data.getCompanyId()));
+            if (data.getCompanyId() != null) {
+                trademarkDetail.setTycId(Long.valueOf(data.getCompanyId()));
+            }
             trademarkDetail.setCid(trademark.getCid());
+            trademarkDetail.setTmName(trademark.getTmName());
             trademarkDetail.setRegNo(detail.getRegNo());
             if (detail.getAppDate() != null) {
                 trademarkDetail.setAppDate(parseDate(detail.getAppDate().toString()));
@@ -80,7 +83,7 @@ public class TradeMarkDetailServiceImpl implements ITradeMarkDetailService {
             trademarkDetail.setApplicantOther2(detail.getApplicantOther2());
             trademarkDetail.setApplicantEn(detail.getApplicantEn());
             trademarkDetail.setAddressEn(detail.getAddressEn());
-            trademarkDetail.setAnnouncemenIssue(detail.getAnnouncemenIssue());
+            trademarkDetail.setAnnouncementIssue(detail.getAnnouncemenIssue());
             if (detail.getAnnouncementDate() != null) {
                 trademarkDetail.setAnnouncementDate(parseDate(detail.getAnnouncementDate().toString()));
             }

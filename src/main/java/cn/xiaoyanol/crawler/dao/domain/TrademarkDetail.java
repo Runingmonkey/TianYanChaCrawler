@@ -23,6 +23,12 @@ public class TrademarkDetail {
     private Long cid;
 
     /**
+     * 商标名称
+     */
+    @Column(name = "tm_name")
+    private String tmName;
+
+    /**
      * 天眼查公司id
      */
     @Column(name = "tyc_id")
@@ -91,8 +97,8 @@ public class TrademarkDetail {
     /**
      * 初审公告期号
      */
-    @Column(name = "announcemen_issue")
-    private Integer announcemenIssue;
+    @Column(name = "announcement_issue")
+    private Integer announcementIssue;
 
     /**
      * 初审公告日期(毫秒)
